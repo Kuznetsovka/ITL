@@ -17,7 +17,9 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_station")
+@Table(name = "tbl_station",
+        indexes =  {@Index(name = "idx_tbl_station_name", columnList = "name"),
+                    @Index(name = "idx_tbl_station_road", columnList = "road")})
 public class StationEntity {
 
     @Id

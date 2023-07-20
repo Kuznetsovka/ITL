@@ -16,7 +16,9 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_road")
+@Table(name = "tbl_road",
+        uniqueConstraints=@UniqueConstraint(
+                name = "tbl_road_number_station_idx", columnNames={"number", "station"}))
 public class RoadEntity {
 
     @Id

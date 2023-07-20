@@ -18,20 +18,22 @@ import java.math.BigDecimal;
 @Builder
 @Entity
 @Embeddable
-@Table(name = "tbl_wagon")
+@Table(name = "tbl_wagon",
+        uniqueConstraints=@UniqueConstraint(
+                name = "bk_tbl_wagon_number_idx", columnNames={"number"}))
 public class WagonEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private Long number;
 
     private String type;
 
     /** Вес тары: вес вагона, в тоннах */
-    @Column(name = "weight_wagon")
+    @Column(name = "weight_wagon", nullable = false)
     private BigDecimal weightWagon;
 
     /** Грузоподъемность, в тоннах */
