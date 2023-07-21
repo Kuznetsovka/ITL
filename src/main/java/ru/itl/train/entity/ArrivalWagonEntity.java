@@ -1,9 +1,6 @@
 package ru.itl.train.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -18,8 +15,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tbl_receiving_wagon",
-        indexes = @Index(name = "idx_tbl_receiving_wagon_wagon", columnList = "wagon"))
+@Table(name = "tbl_arrival_wagon")
 public class ArrivalWagonEntity {
 
     @Id
@@ -27,11 +23,7 @@ public class ArrivalWagonEntity {
     private Long id;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "number", column = @Column(name = "wagon_number")),
-            @AttributeOverride(name = "weightWagon", column = @Column(name = "weight_wagon")),
-    })
-    private WagonEntity wagon;
+    private TechInfoEntity wagonInfo;
 
     @Column(name = "nomenclature_cargo")
     private String nomenclatureCargo;

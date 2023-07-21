@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tbl_user",
         uniqueConstraints=@UniqueConstraint(
-                name = "uq_tbl_user_login_password_idx", columnNames={"login", "password"}))
+                name = "bk_tbl_user_login_password_idx", columnNames={"login", "password"}))
 public class UserEntity {
 
     @Id

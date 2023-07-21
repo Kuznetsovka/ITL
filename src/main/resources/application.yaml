@@ -8,12 +8,12 @@ spring:
     name: train
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
   mvc:
     static-path-pattern: statico/**
   datasource:
-    url: jdbc:${DATABASE_PATH:postgresql://localhost:5433/postgres}
+    url: jdbc:${DATABASE_PATH:postgresql://localhost:5433/train_db}
     username: ${DATABASE_USER:postgres}
     password: ${DATABASE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver

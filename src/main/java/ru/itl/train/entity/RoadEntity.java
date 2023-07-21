@@ -18,13 +18,15 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tbl_road",
         uniqueConstraints=@UniqueConstraint(
-                name = "tbl_road_number_station_idx", columnNames={"number", "station"}))
+                name = "bk_tbl_road_number_station_id_idx", columnNames={"number", "station_id"}))
 public class RoadEntity {
 
     @Id
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private Long number;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="station_id",
+            foreignKey=@ForeignKey(name = "fk_tbl_road_station"))
     private StationEntity station;
 }

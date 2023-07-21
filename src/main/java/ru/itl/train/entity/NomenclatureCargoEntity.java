@@ -18,7 +18,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tbl_nomenclature_cargo",
         uniqueConstraints=@UniqueConstraint(
-                name = "uq_tbl_nomenclature_cargo_code_idx", columnNames={"code"}))
+                name = "bk_tbl_nomenclature_cargo_code_idx", columnNames={"code"}))
 public class NomenclatureCargoEntity {
 
     @Id
