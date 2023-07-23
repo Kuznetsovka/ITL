@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class Wagon {
-
     private Long id;
     private Long number;
     private String type;
