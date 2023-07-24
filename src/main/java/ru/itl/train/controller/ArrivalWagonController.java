@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.itl.train.dto.Road;
+import ru.itl.train.dto.ArrivalWagon;
 import ru.itl.train.service.CommonService;
 
 import java.util.List;
@@ -14,49 +14,49 @@ import java.util.List;
  * @author Kuznetsovka 23.07.2023
  */
 @RestController
-@RequestMapping("/api/v1/road")
+@RequestMapping("/api/v1/arrival_train")
 @Slf4j
-public class RoadController {
+public class ArrivalWagonController {
 
     @Autowired
-    private CommonService<Road> service;
+    private CommonService<ArrivalWagon> service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Road createRoad(@RequestBody Road road){
-        return service.save(road);
+    public ArrivalWagon createArrivalWagon(@RequestBody ArrivalWagon arrivalWagon) {
+        return service.save(arrivalWagon);
     }
 
     @PutMapping(value = "{id}")
-    public ResponseEntity<Road> update(@PathVariable("id") long id,
-                                       @RequestBody Road road) throws Exception {
+    public ResponseEntity<ArrivalWagon> update(@PathVariable("id") long id,
+                                               @RequestBody ArrivalWagon arrivalWagon) throws Exception {
         return service.getById(id)
-                .map(savedRoad -> {
-                    Road updated = service.update(road);
+                .map(savedArrivalWagon -> {
+                    ArrivalWagon updated = service.update(arrivalWagon);
                     return new ResponseEntity<>(updated, HttpStatus.OK);
 
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping(value="{id}")
+    @DeleteMapping(value = "{id}")
     public ResponseEntity<String> delete(@RequestBody Long number) throws Exception {
         Long deletedId = service.delete(number);
-        String msg = String.format("Успешное удаление пути %d", deletedId);
+        String msg = String.format("Успешное удаление натурного листа %d", deletedId);
         log.info(msg);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
-    @GetMapping(value="/get/{id}")
-    public ResponseEntity<Road> get(@PathVariable Long id) throws Exception {
+    @GetMapping(value = "/get/{id}")
+    public ResponseEntity<ArrivalWagon> get(@PathVariable Long id) throws Exception {
         return service.getById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping(value="/get")
-    public List<Road> get() throws Exception {
-        List<Road> roads = service.getAll();
-        return roads;
+    @GetMapping(value = "/get")
+    public List<ArrivalWagon> get() throws Exception {
+        List<ArrivalWagon> arrivalWagons = service.getAll();
+        return arrivalWagons;
     }
 }

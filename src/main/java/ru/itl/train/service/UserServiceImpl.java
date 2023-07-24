@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
                 .login(login)
                 .isActive(true)
                 .password(password)
-                .fio("KuznetsovKirill Alekseevich")
+                .fio("Kuznetsov Kirill Alekseevich")
                 .role(Role.ADMIN).build();
         if (!isUserByLogin(user.getLogin())) {
             save(user);

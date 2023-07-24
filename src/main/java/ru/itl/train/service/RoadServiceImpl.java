@@ -19,17 +19,20 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class RoadServiceImpl implements RoadService {
+public class RoadServiceImpl implements CommonService<Road> {
 
     @Autowired
     private RoadRepository repository;
 
+    @Autowired
+    private MapperService mapper;
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Road update(Road road) {
-        RoadEntity entity = entityFromDto(road);
+        RoadEntity entity = mapper.roadEntityFromDto(road);
         RoadEntity savedRoad = repository.save(entity);
-        return dtoFromEntity(savedRoad);
+        return mapper.roadDtoFromEntity(savedRoad);
     }
 
     @Override
@@ -43,16 +46,16 @@ public class RoadServiceImpl implements RoadService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public List<Road> getAllRoads() {
+    public List<Road> getAll() {
         List<RoadEntity> roads = repository.findAll();
-        return roads.stream().map(this::dtoFromEntity).collect(Collectors.toList());
+        return roads.stream().map(mapper::roadDtoFromEntity).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public Optional<Road> getById(Long id) {
         Optional<RoadEntity> road = repository.findByNumber(id);
-        Road dto = road.map(this::dtoFromEntity).orElse(null);
+        Road dto = road.map(mapper::roadDtoFromEntity).orElse(null);
         return (dto == null) ? Optional.empty() : Optional.of(dto);
     }
 
@@ -65,24 +68,8 @@ public class RoadServiceImpl implements RoadService {
             log.error(msg);
             throw new ResourceNotFoundException(msg);
         }
-        RoadEntity entity = entityFromDto(road);
+        RoadEntity entity = mapper.roadEntityFromDto(road);
         RoadEntity savedEntity = repository.save(entity);
-        return dtoFromEntity(savedEntity);
-    }
-
-    @Override
-    public Road dtoFromEntity(RoadEntity entity) {
-        return Road.builder()
-                .number(entity.getNumber())
-                .station(entity.getStation())
-                .build();
-    }
-
-    @Override
-    public RoadEntity entityFromDto(Road dto) {
-        return RoadEntity.builder()
-                .number(dto.getNumber())
-                .station(dto.getStation())
-                .build();
+        return mapper.roadDtoFromEntity(savedEntity);
     }
 }

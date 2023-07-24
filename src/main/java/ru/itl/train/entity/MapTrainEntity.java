@@ -29,9 +29,10 @@ public class MapTrainEntity {
             foreignKey=@ForeignKey(name = "fk_tbl_map_train_road"))
     private RoadEntity road;
 
+    @Column(name = "order_wagon")
     @OneToMany
-    @JoinColumn(foreignKey=@ForeignKey(name = "fk_tbl_map_train_order_wagon"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_tbl_map_train_order_wagon"))
     @OrderBy("order")
-    private Set<PartTrainEntity> order_wagon;
+    private Set<PartTrainEntity> orderWagon;
 
 }

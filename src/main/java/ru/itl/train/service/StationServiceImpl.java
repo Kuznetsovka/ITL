@@ -6,9 +6,9 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.itl.train.dto.Wagon;
-import ru.itl.train.entity.WagonEntity;
-import ru.itl.train.repository.WagonRepository;
+import ru.itl.train.dto.Station;
+import ru.itl.train.entity.StationEntity;
+import ru.itl.train.repository.StationRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,20 +19,20 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class WagonServiceImpl implements CommonService<Wagon> {
+public class StationServiceImpl implements CommonService<Station> {
 
     @Autowired
-    private WagonRepository repository;
+    private StationRepository repository;
 
     @Autowired
     private MapperService mapper;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public Wagon update(Wagon wagon) {
-        WagonEntity entity = mapper.wagonEntityFromDto(wagon);
-        WagonEntity savedWagon = repository.save(entity);
-        return mapper.wagonDtoFromEntity(savedWagon);
+    public Station update(Station station) {
+        StationEntity entity = mapper.stationEntityFromDto(station);
+        StationEntity savedStation = repository.save(entity);
+        return mapper.stationDtoFromEntity(savedStation);
     }
 
     @Override
@@ -46,30 +46,30 @@ public class WagonServiceImpl implements CommonService<Wagon> {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public List<Wagon> getAll() {
-        List<WagonEntity> wagons = repository.findAll();
-        return wagons.stream().map(mapper::wagonDtoFromEntity).collect(Collectors.toList());
+    public List<Station> getAll() {
+        List<StationEntity> stations = repository.findAll();
+        return stations.stream().map(mapper::stationDtoFromEntity).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public Optional<Wagon> getById(Long id) {
-        Optional<WagonEntity> wagon = repository.findById(id);
-        Wagon dto = wagon.map(mapper::wagonDtoFromEntity).orElse(null);
+    public Optional<Station> getById(Long id) {
+        Optional<StationEntity> station = repository.findById(id);
+        Station dto = station.map(mapper::stationDtoFromEntity).orElse(null);
         return (dto == null) ? Optional.empty() : Optional.of(dto);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public Wagon save(Wagon wagon) {
-        Optional<WagonEntity> savedEmployee = repository.findByWagonInfo_Number(wagon.getNumber());
+    public Station save(Station station) {
+        Optional<StationEntity> savedEmployee = repository.findById(station.getId());
         if (savedEmployee.isPresent()) {
-            String msg = String.format("Вагон с номером %s уже существует.", wagon.getNumber());
+            String msg = String.format("Станция с номером %s уже существует.", station.getId());
             log.error(msg);
             throw new ResourceNotFoundException(msg);
         }
-        WagonEntity entity = mapper.wagonEntityFromDto(wagon);
-        WagonEntity savedEntity = repository.save(entity);
-        return mapper.wagonDtoFromEntity(savedEntity);
+        StationEntity entity = mapper.stationEntityFromDto(station);
+        StationEntity savedEntity = repository.save(entity);
+        return mapper.stationDtoFromEntity(savedEntity);
     }
 }

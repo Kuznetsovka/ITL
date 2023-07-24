@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.itl.train.dto.Wagon;
+import ru.itl.train.dto.Station;
 import ru.itl.train.service.CommonService;
 
 import java.util.List;
@@ -14,49 +14,49 @@ import java.util.List;
  * @author Kuznetsovka 23.07.2023
  */
 @RestController
-@RequestMapping("/api/v1/wagon")
+@RequestMapping("/api/v1/station")
 @Slf4j
-public class WagonController {
+public class StationController {
 
     @Autowired
-    private CommonService<Wagon> service;
+    private CommonService<Station> service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Wagon createWagon(@RequestBody Wagon wagon){
-        return service.save(wagon);
+    public Station createStation(@RequestBody Station station) {
+        return service.save(station);
     }
 
     @PutMapping(value = "{id}")
-    public ResponseEntity<Wagon> update(@PathVariable("id") long id,
-                                        @RequestBody Wagon wagon) throws Exception {
+    public ResponseEntity<Station> update(@PathVariable("id") long id,
+                                          @RequestBody Station station) throws Exception {
         return service.getById(id)
-                .map(savedWagon -> {
-                    Wagon updated = service.update(wagon);
+                .map(savedStation -> {
+                    Station updated = service.update(station);
                     return new ResponseEntity<>(updated, HttpStatus.OK);
 
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping(value="{id}")
+    @DeleteMapping(value = "{id}")
     public ResponseEntity<String> delete(@RequestBody Long id) throws Exception {
         Long deletedId = service.delete(id);
-        String msg = String.format("Успешное удаление вагона %d", deletedId);
+        String msg = String.format("Успешное удаление станции %d", deletedId);
         log.info(msg);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
-    @GetMapping(value="/get/{id}")
-    public ResponseEntity<Wagon> get(@PathVariable Long id) throws Exception {
+    @GetMapping(value = "/get/{id}")
+    public ResponseEntity<Station> get(@PathVariable Long id) throws Exception {
         return service.getById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping(value="/get")
-    public List<Wagon> get() throws Exception {
-        List<Wagon> wagons = service.getAll();
-        return wagons;
+    @GetMapping(value = "/get")
+    public List<Station> get() throws Exception {
+        List<Station> stations = service.getAll();
+        return stations;
     }
 }

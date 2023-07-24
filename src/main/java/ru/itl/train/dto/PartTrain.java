@@ -6,15 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Путь
- * @author Kuznetsovka 19.07.2023
+ * @author Kuznetsovka 24.07.2023
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Road {
+public class PartTrain {
 
-    private Long number;
-    private Station station;
+    private Long order;
+    private Wagon wagon;
 }

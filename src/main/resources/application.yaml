@@ -1,8 +1,5 @@
 server:
   port: ${PORT:8080}
-  hostname: localhost
-  servlet:
-    context-path: /train
 spring:
   application:
     name: train

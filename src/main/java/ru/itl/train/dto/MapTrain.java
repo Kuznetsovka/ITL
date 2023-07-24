@@ -5,16 +5,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Deque;
+
 /**
- * Путь
- * @author Kuznetsovka 19.07.2023
+ * @author Kuznetsovka 24.07.2023
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Road {
+public class MapTrain {
 
-    private Long number;
-    private Station station;
+    private Long id;
+
+    private Road road;
+
+    private Deque<PartTrain> orderWagon;
+
 }

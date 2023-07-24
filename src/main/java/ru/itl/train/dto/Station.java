@@ -20,6 +20,6 @@ public class Station {
     private Long id;
 
     private String name;
-    private Set<Short> road;
+    private Set<Road> road;
 
 }
