@@ -17,7 +17,7 @@
     </div>
 
     <form th:action="@{/auth}" method="post">
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="Логин">
+      <input type="text" id="login" class="fadeIn second" name="username" placeholder="Логин">
       <input type="password" id="password" class="fadeIn third" name="password" th:placeholder="#{login.password}">
       <input type="submit" class="fadeIn fourth" name="submit" th:value="#{login.btn}">
       <input type='checkbox' id ='remember-me' name='remember-me'/> <span th:text="#{login.remember.me}">Remember me on this computer.</span>

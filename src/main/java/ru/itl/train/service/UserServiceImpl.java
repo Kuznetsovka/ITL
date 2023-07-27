@@ -1,6 +1,5 @@
 package ru.itl.train.service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,7 +25,6 @@ import java.util.List;
 
 @Service
 @Slf4j
-@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     @Value("${spring.security.user.name}")
@@ -37,7 +35,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     /**
      * {@inheritDoc }
