@@ -1,7 +1,7 @@
 package ru.itl.train.service;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,13 +19,12 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@AllArgsConstructor
 public class MapTrainServiceImpl implements CommonService<MapTrain> {
 
-    @Autowired
-    private MapTrainRepository repository;
+    private final MapTrainRepository repository;
 
-    @Autowired
-    private MapperService mapper;
+    private final MapperService mapper;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)

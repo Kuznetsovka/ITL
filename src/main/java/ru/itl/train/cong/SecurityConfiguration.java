@@ -1,6 +1,6 @@
 package ru.itl.train.cong;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,9 +21,9 @@ import ru.itl.train.service.UserService;
         prePostEnabled = true,
         securedEnabled = true,
         jsr250Enabled = true)
+@AllArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private ApplicationContext appContext;
+    private final ApplicationContext appContext;
 
     private UserService userService;
 

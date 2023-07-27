@@ -1,7 +1,7 @@
 package ru.itl.train.service;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,13 +19,12 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@AllArgsConstructor
 public class NomenclatureCargoServiceImpl implements CommonService<NomenclatureCargo> {
 
-    @Autowired
-    private NomenclatureCargoRepository repository;
+    private final NomenclatureCargoRepository repository;
 
-    @Autowired
-    private MapperService mapper;
+    private final MapperService mapper;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)

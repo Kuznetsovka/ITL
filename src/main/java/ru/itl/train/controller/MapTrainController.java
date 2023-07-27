@@ -1,7 +1,7 @@
 package ru.itl.train.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/map_train")
 @Slf4j
+@AllArgsConstructor
 public class MapTrainController {
 
-    @Autowired
-    private CommonService<MapTrain> service;
+    private final CommonService<MapTrain> service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

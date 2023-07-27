@@ -1,7 +1,7 @@
 package ru.itl.train.service;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,13 +19,12 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@AllArgsConstructor
 public class PartTrainServiceImpl implements PartTrainService {
 
-    @Autowired
-    private PartTrainRepository repository;
+    private final PartTrainRepository repository;
 
-    @Autowired
-    private MapperService mapper;
+    private final MapperService mapper;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
@@ -39,7 +38,8 @@ public class PartTrainServiceImpl implements PartTrainService {
     @Transactional(propagation = Propagation.REQUIRED)
     public String delete(Long order, Long wagonNumber) {
         if (wagonNumber != null && order != null && repository.existsByOrderAndWagon_WagonInfo_Number(order, wagonNumber)) {
-            repository.delete(repository.findByOrderAndWagon_WagonInfo_Number(order, wagonNumber).get());
+            repository.findByOrderAndWagon_WagonInfo_Number(order, wagonNumber).ifPresent(repository::delete);
+
         }
         if (wagonNumber == null || order == null) {
             throw new IllegalArgumentException("Не корректные данные");

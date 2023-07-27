@@ -1,11 +1,10 @@
 package ru.itl.train.controller;
 
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
 import org.postgresql.util.ServerErrorMessage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.WebAttributes;
@@ -22,10 +21,10 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 @Slf4j
+@AllArgsConstructor
 public class MainController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @RequestMapping(value = "/login")
     public String login(Model model, HttpSession session, @RequestParam(required = false) Boolean error) {
