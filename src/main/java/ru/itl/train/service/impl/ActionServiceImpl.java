@@ -62,13 +62,13 @@ public class ActionServiceImpl implements ActionService {
     private String checkArrivalAction(ArrivalWagonPojo arrivalWagonPojo) {
         String msg = "Вагоны не могут быть приняты!";
         if (arrivalWagonPojo.getStation() == null || arrivalWagonPojo.getStation().getId() == null) {
-            return String.join(".", msg, "В json не указана станция прибытия или не указан id станции.");
+            return String.join("", msg, "В json не указана станция прибытия или не указан id станции.");
         }
         if (arrivalWagonPojo.getRoad() == null || arrivalWagonPojo.getRoad().getNumber() == null) {
-            return String.join(".", msg, "В json не указан путь прибытия или не указан номер.");
+            return String.join("", msg, "В json не указан путь прибытия или не указан номер.");
         }
         if (arrivalWagonPojo.getWagons() == null || arrivalWagonPojo.getWagons().isEmpty()) {
-            return String.join(".", msg, "В json не указаны вагоны.");
+            return String.join("", msg, "В json не указаны вагоны.");
         }
         return null;
     }
