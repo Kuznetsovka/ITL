@@ -63,20 +63,16 @@ public class RoadServiceImpl implements RoadService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Road save(Road road) {
-        Optional<RoadEntity> savedEmployee = repository.findByNumber(road.getNumber());
-        if (savedEmployee.isPresent()) {
-            String msg = String.format("Путь с номером %s уже существует.", road.getNumber());
-            log.error(msg);
-            throw new ResourceNotFoundException(msg);
+        if (road.getNumber() != null) {
+            Optional<RoadEntity> savedEmployee = repository.findByNumber(road.getNumber());
+            if (savedEmployee.isPresent()) {
+                String msg = String.format("Путь с номером %s уже существует.", road.getNumber());
+                log.error(msg);
+                throw new ResourceNotFoundException(msg);
+            }
         }
         RoadEntity entity = mapper.roadEntityFromDto(road);
         RoadEntity savedEntity = repository.save(entity);
         return mapper.roadDtoFromEntity(savedEntity);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    @Override
-    public Optional<RoadEntity> checkRoadOnStation(Long number, Long id) {
-        return repository.findByNumberAndStation_Id(number, id);
     }
 }

@@ -1,6 +1,7 @@
 package ru.itl.train.service;
 
 import ru.itl.train.dto.Station;
+import ru.itl.train.entity.RoadEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,4 +19,6 @@ public interface StationService {
     Optional<Station> getById(Long id);
 
     Station save(Station station);
+
+    Optional<RoadEntity> checkRoadOnStation(Long number, Long id);
 }

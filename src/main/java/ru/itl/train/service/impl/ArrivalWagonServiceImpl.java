@@ -63,11 +63,13 @@ public class ArrivalWagonServiceImpl implements ArrivalWagonService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public ArrivalWagon save(ArrivalWagon arrivalWagon) {
-        Optional<ArrivalWagonEntity> savedEmployee = repository.findById(arrivalWagon.getId());
-        if (savedEmployee.isPresent()) {
-            String msg = String.format("Натурный лист id %s уже существует.", arrivalWagon.getId());
-            log.error(msg);
-            throw new ResourceNotFoundException(msg);
+        if (arrivalWagon.getId() != null) {
+            Optional<ArrivalWagonEntity> savedEmployee = repository.findById(arrivalWagon.getId());
+            if (savedEmployee.isPresent()) {
+                String msg = String.format("Натурный лист id %s уже существует.", arrivalWagon.getId());
+                log.error(msg);
+                throw new ResourceNotFoundException(msg);
+            }
         }
         ArrivalWagonEntity entity = mapper.arrivalWagonEntityFromDto(arrivalWagon);
         ArrivalWagonEntity savedEntity = repository.save(entity);

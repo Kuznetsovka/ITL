@@ -39,6 +39,7 @@ public class StationController {
                                           @RequestBody Station station) throws Exception {
         return service.getById(id)
                 .map(savedStation -> {
+                    station.setId(id);
                     Station updated = service.update(station);
                     return new ResponseEntity<>(updated, HttpStatus.OK);
 

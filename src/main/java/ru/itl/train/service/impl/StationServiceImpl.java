@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itl.train.dto.Station;
+import ru.itl.train.entity.RoadEntity;
 import ru.itl.train.entity.StationEntity;
 import ru.itl.train.repository.StationRepository;
 import ru.itl.train.service.MapperService;
@@ -63,14 +64,22 @@ public class StationServiceImpl implements StationService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Station save(Station station) {
-        Optional<StationEntity> savedEmployee = repository.findById(station.getId());
-        if (savedEmployee.isPresent()) {
-            String msg = String.format("Станция с номером %s уже существует.", station.getId());
-            log.error(msg);
-            throw new ResourceNotFoundException(msg);
+        if (station.getId() != null) {
+            Optional<StationEntity> savedEmployee = repository.findById(station.getId());
+            if (savedEmployee.isPresent()) {
+                String msg = String.format("Станция с номером %s уже существует.", station.getId());
+                log.error(msg);
+                throw new ResourceNotFoundException(msg);
+            }
         }
         StationEntity entity = mapper.stationEntityFromDto(station);
         StationEntity savedEntity = repository.save(entity);
         return mapper.stationDtoFromEntity(savedEntity);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    @Override
+    public Optional<RoadEntity> checkRoadOnStation(Long number, Long id) {
+        return repository.getRoadByNumberAndStationId(number, id);
     }
 }

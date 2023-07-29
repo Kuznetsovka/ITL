@@ -11,6 +11,7 @@ import ru.itl.train.entity.RoadEntity;
 import ru.itl.train.service.ActionService;
 import ru.itl.train.service.MapTrainService;
 import ru.itl.train.service.RoadService;
+import ru.itl.train.service.StationService;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,6 +27,8 @@ public class ActionServiceImpl implements ActionService {
 
     private final RoadService roadService;
 
+    private final StationService stationService;
+
     private final MapTrainService mapTrainService;
 
     @Transactional
@@ -36,16 +39,22 @@ public class ActionServiceImpl implements ActionService {
             log.error(msg);
             return msg;
         }
-        Optional<RoadEntity> road = roadService.checkRoadOnStation(arrivalWagonPojo.getRoad().getNumber(), arrivalWagonPojo.getStation().getId());
+        Optional<RoadEntity> road = stationService.checkRoadOnStation(arrivalWagonPojo.getRoad().getNumber(), arrivalWagonPojo.getStation().getId());
         if (road.isEmpty()) {
-            return String.join(".", msg, "Указанный путь не существует на указанной станции");
+            return "Вагоны не могут быть приняты! Указанный путь не существует на указанной станции";
         }
         Optional<MapTrain> mapTrain = mapTrainService.addWagons(road.get(), arrivalWagonPojo.getWagons());
+        if (mapTrain.isEmpty()) {
+            return "Вагоны не могут быть приняты! Указанный путь не существует на указанной станции";
+        }
         String numberWagons = arrivalWagonPojo.getWagons().stream()
                 .map(Wagon::getNumber)
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
         String numberStation = arrivalWagonPojo.getStation().getName();
+        if (numberStation == null) {
+            stationService.getById(arrivalWagonPojo.getStation().getId()).get().getName();
+        }
         msg = String.format("Вагоны [%s] приняты на станцию [%s]!", numberWagons, numberStation);
         return msg;
     }

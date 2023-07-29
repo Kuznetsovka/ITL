@@ -63,11 +63,13 @@ public class WagonServiceImpl implements WagonService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Wagon save(Wagon wagon) {
-        Optional<WagonEntity> savedEmployee = repository.findByWagonInfo_Number(wagon.getNumber());
-        if (savedEmployee.isPresent()) {
-            String msg = String.format("Вагон с номером %s уже существует.", wagon.getNumber());
-            log.error(msg);
-            throw new ResourceNotFoundException(msg);
+        if (wagon.getNumber() != null) {
+            Optional<WagonEntity> savedEmployee = repository.findByWagonInfo_Number(wagon.getNumber());
+            if (savedEmployee.isPresent()) {
+                String msg = String.format("Вагон с номером %s уже существует.", wagon.getNumber());
+                log.error(msg);
+                throw new ResourceNotFoundException(msg);
+            }
         }
         WagonEntity entity = mapper.wagonEntityFromDto(wagon);
         WagonEntity savedEntity = repository.save(entity);

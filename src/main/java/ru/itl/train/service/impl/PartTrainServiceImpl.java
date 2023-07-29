@@ -67,13 +67,15 @@ public class PartTrainServiceImpl implements PartTrainService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public PartTrain save(PartTrain partTrain) {
-        Optional<PartTrainEntity> savedEmployee = repository
-                .findByOrderAndWagon_WagonInfo_Number(partTrain.getOrder(), partTrain.getWagon().getId());
-        if (savedEmployee.isPresent()) {
-            String msg = String.format("Составной вагон под номером %d и номером вагона %d уже существует.",
-                    partTrain.getOrder(), partTrain.getWagon().getNumber());
-            log.error(msg);
-            throw new ResourceNotFoundException(msg);
+        if (partTrain.getOrder() != null && partTrain.getWagon() != null && partTrain.getWagon().getId() != null) {
+            Optional<PartTrainEntity> savedEmployee = repository
+                    .findByOrderAndWagon_WagonInfo_Number(partTrain.getOrder(), partTrain.getWagon().getId());
+            if (savedEmployee.isPresent()) {
+                String msg = String.format("Составной вагон под номером %d и номером вагона %d уже существует.",
+                        partTrain.getOrder(), partTrain.getWagon().getNumber());
+                log.error(msg);
+                throw new ResourceNotFoundException(msg);
+            }
         }
         PartTrainEntity entity = mapper.partTrainEntityFromDto(partTrain);
         PartTrainEntity savedEntity = repository.save(entity);

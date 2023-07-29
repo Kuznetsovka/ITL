@@ -26,7 +26,5 @@ public class RoadEntity {
     private Long number;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="station_id",
-            foreignKey=@ForeignKey(name = "fk_tbl_road_station"))
     private StationEntity station;
 }

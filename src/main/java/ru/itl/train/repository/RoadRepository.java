@@ -15,6 +15,4 @@ public interface RoadRepository extends JpaRepository<RoadEntity, Long> {
     boolean existsByNumber(Long number);
 
     RoadEntity getByNumber(Long number);
-
-    Optional<RoadEntity> findByNumberAndStation_Id(Long number, Long id);
 }

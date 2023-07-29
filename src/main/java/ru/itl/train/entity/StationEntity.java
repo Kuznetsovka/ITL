@@ -24,11 +24,10 @@ public class StationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "station_id",
-            foreignKey=@ForeignKey(name = "fk_tbl_station_road"))
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "station", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RoadEntity> road;
 
 }

@@ -23,7 +23,7 @@ public class PartTrainEntity {
     @Column(name = "id", nullable = false)
     private Long order;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_tbl_part_train_wagon"), name = "wagon_id")
     private WagonEntity wagon;
 

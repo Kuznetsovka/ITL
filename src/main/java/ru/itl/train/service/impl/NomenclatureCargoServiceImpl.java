@@ -63,11 +63,13 @@ public class NomenclatureCargoServiceImpl implements NomenclatureCargoService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public NomenclatureCargo save(NomenclatureCargo nomenclatureCargo) {
-        Optional<NomenclatureCargoEntity> savedEmployee = repository.findById(nomenclatureCargo.getId());
-        if (savedEmployee.isPresent()) {
-            String msg = String.format("Запить из справочника номенклатурных грузов id %s уже существует.", nomenclatureCargo.getId());
-            log.error(msg);
-            throw new ResourceNotFoundException(msg);
+        if (nomenclatureCargo.getId() != null) {
+            Optional<NomenclatureCargoEntity> savedEmployee = repository.findById(nomenclatureCargo.getId());
+            if (savedEmployee.isPresent()) {
+                String msg = String.format("Запить из справочника номенклатурных грузов id %s уже существует.", nomenclatureCargo.getId());
+                log.error(msg);
+                throw new ResourceNotFoundException(msg);
+            }
         }
         NomenclatureCargoEntity entity = mapper.nomenclatureCargoEntityFromDto(nomenclatureCargo);
         NomenclatureCargoEntity savedEntity = repository.save(entity);

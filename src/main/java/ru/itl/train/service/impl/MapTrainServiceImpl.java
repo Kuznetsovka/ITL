@@ -100,7 +100,7 @@ public class MapTrainServiceImpl implements MapTrainService {
         MapTrainEntity mapTrainEntity = mapTrain.orElse(new MapTrainEntity());
         mapTrainEntity.setRoad(road);
         mapTrainEntity.setOrderWagon(oldPartTrain);
-        repository.save(mapTrainEntity);
-        return Optional.empty();
+        mapTrainEntity = repository.save(mapTrainEntity);
+        return Optional.of(mapper.mapTrainDtoFromEntity(mapTrainEntity));
     }
 }
