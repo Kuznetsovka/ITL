@@ -20,6 +20,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>2.0.6</slf4j.version>
+        <swagger.version>1.7.0</swagger.version>
     </properties>
     <dependencies>
         <dependency>
@@ -84,13 +85,18 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.7.0</version>
+            <version>${swagger.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-security</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
 
         <dependency>

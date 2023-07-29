@@ -5,7 +5,7 @@ spring:
     name: train
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
   mvc:
     static-path-pattern: statico/**
@@ -18,12 +18,9 @@ spring:
     user:
       name: admin
       password: admin
+springdoc:
+  show-login-endpoint: true
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: info, health, beans, mappings
 logging:
   level:
     org.springframework.web: DEBUG

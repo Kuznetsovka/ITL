@@ -25,12 +25,12 @@ public class MapTrainEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="road_id",
-            foreignKey=@ForeignKey(name = "fk_tbl_map_train_road"))
+    @JoinColumn(name = "road_id",
+            foreignKey = @ForeignKey(name = "fk_tbl_map_train_road"))
     private RoadEntity road;
 
-    @Column(name = "order_wagon")
-    @OneToMany
+    @Column
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_tbl_map_train_order_wagon"))
     @OrderBy("order")
     private Set<PartTrainEntity> orderWagon;

@@ -1,4 +1,4 @@
-package ru.itl.train.service;
+package ru.itl.train.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.itl.train.dto.PartTrain;
 import ru.itl.train.entity.PartTrainEntity;
 import ru.itl.train.repository.PartTrainRepository;
+import ru.itl.train.service.MapperService;
+import ru.itl.train.service.PartTrainService;
 
 import java.util.List;
 import java.util.Optional;

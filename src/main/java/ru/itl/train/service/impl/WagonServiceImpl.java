@@ -1,4 +1,4 @@
-package ru.itl.train.service;
+package ru.itl.train.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.itl.train.dto.Wagon;
 import ru.itl.train.entity.WagonEntity;
 import ru.itl.train.repository.WagonRepository;
+import ru.itl.train.service.MapperService;
+import ru.itl.train.service.WagonService;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class WagonServiceImpl implements CommonService<Wagon> {
+public class WagonServiceImpl implements WagonService {
 
     private final WagonRepository repository;
 

@@ -5,23 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Queue;
+import java.util.List;
 
 /**
- * Карта расположения подвижного состава
- *
- * @author Kuznetsovka 24.07.2023
+ * @author Kuznetsovka 29.07.2023
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MapTrain {
-
-    private Long id;
-
+public class ArrivalWagonPojo {
+    private List<Wagon> wagons;
+    private Station station;
     private Road road;
-
-    private Queue<PartTrain> orderWagon;
-
 }

@@ -1,5 +1,8 @@
 package ru.itl.train.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,20 +16,24 @@ import java.util.List;
 /**
  * @author Kuznetsovka 23.07.2023
  */
+@Tag(name = "Составы", description = "PartTrain management APIs")
 @RestController
 @RequestMapping("/api/v1/part_train")
 @Slf4j
 @AllArgsConstructor
+@SecurityRequirement(name = "Security scheme")
 public class PartTrainController {
 
     private final PartTrainService service;
 
+    @Operation(summary = "СОХРАНЕНИЕ")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PartTrain createPartTrain(@RequestBody PartTrain partTrain) {
         return service.save(partTrain);
     }
 
+    @Operation(summary = "ОБНОВЛЕНИЕ по номеру вагона и порядковому номеру")
     @PutMapping(value = "{order}/{numberWagon}")
     public ResponseEntity<PartTrain> update(@PathVariable("order") long order,
                                             @PathVariable("numberWagon") long numberWagon,
@@ -40,6 +47,7 @@ public class PartTrainController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "УДАЛЕНИЕ")
     @DeleteMapping(value = "{order}/{numberWagon}")
     public ResponseEntity<String> delete(@PathVariable("order") long order,
                                          @PathVariable("numberWagon") long numberWagon) throws Exception {
@@ -49,6 +57,7 @@ public class PartTrainController {
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
+    @Operation(summary = "ПОЛУЧЕНИЕ по номеру вагона и порядковому номеру")
     @GetMapping(value = "/get/{order}/{numberWagon}")
     public ResponseEntity<PartTrain> get(@PathVariable("order") long order,
                                          @PathVariable("numberWagon") long numberWagon) throws Exception {
@@ -57,8 +66,9 @@ public class PartTrainController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "ПОЛУЧЕНИЕ СПИСКА")
     @GetMapping(value = "/get")
-    public List<PartTrain> get() throws Exception {
+    public List<PartTrain> getAll() throws Exception {
         List<PartTrain> partTrains = service.getAll();
         return partTrains;
     }

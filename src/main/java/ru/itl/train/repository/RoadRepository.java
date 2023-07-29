@@ -11,7 +11,10 @@ import java.util.Optional;
 public interface RoadRepository extends JpaRepository<RoadEntity, Long> {
 
     Optional<RoadEntity> findByNumber(Long number);
+
     boolean existsByNumber(Long number);
 
     RoadEntity getByNumber(Long number);
+
+    Optional<RoadEntity> findByNumberAndStation_Id(Long number, Long id);
 }

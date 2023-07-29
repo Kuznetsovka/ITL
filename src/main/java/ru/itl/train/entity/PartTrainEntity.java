@@ -1,6 +1,5 @@
 package ru.itl.train.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,12 +12,11 @@ import javax.persistence.*;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "tbl_part_train",
-        uniqueConstraints=@UniqueConstraint(
-                name = "bk_tbl_part_train_order_wagon_id_idx", columnNames={"wagon_id"}))
+        uniqueConstraints = @UniqueConstraint(
+                name = "bk_tbl_part_train_order_wagon_id_idx", columnNames = {"wagon_id"}))
 public class PartTrainEntity {
 
     @Id
@@ -26,6 +24,11 @@ public class PartTrainEntity {
     private Long order;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(foreignKey=@ForeignKey(name = "fk_tbl_part_train_wagon"), name="wagon_id")
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_tbl_part_train_wagon"), name = "wagon_id")
     private WagonEntity wagon;
+
+    public PartTrainEntity(Long order, WagonEntity wagon) {
+        this.order = order;
+        this.wagon = wagon;
+    }
 }

@@ -1,4 +1,4 @@
-package ru.itl.train.service;
+package ru.itl.train.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +14,7 @@ import ru.itl.train.dto.User;
 import ru.itl.train.entity.Role;
 import ru.itl.train.entity.UserEntity;
 import ru.itl.train.repository.UserRepository;
+import ru.itl.train.service.UserService;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;

@@ -55,41 +55,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf()
-                .disable()
-                .authorizeRequests()
-                .antMatchers("/**/*.css").permitAll()
-                .antMatchers("/**/*.js").permitAll()
-                .antMatchers("/login/**").permitAll()
-                .antMatchers("/**").permitAll()
-                //Все остальные страницы требуют аутентификации
+        http.authorizeRequests()
+                .antMatchers("/swagger-ui/**", "/javainuse-openapi/**").permitAll()
                 .anyRequest().authenticated()
-            .and()
-                //Настройка для входа в систему
-                .formLogin()
-                .loginProcessingUrl("/auth")
-                .loginPage("/login")
-                //Перенаправление на главную страницу после успешного входа
-                .defaultSuccessUrl("/auth")
-                .permitAll()
-            .and()
-                .logout()
-                .permitAll()
-                .logoutSuccessUrl("/")
-            .and()
-                .rememberMe()
-                .key("myUniqueKey")
-                .rememberMeCookieName("remember-me")
-                .tokenValiditySeconds(10000000)
-                .userDetailsService(userService);
-
-        http.logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/logout")
-                .permitAll()
-                .deleteCookies("JSESSIONID");
-
-        //.logoutRequestMatcher(new AntPathRequestMatcher(getLogoutUrl()))  //позволяет делать logout с включенной csrf защитой
+                .and()
+                .httpBasic();
     }
 
 }
