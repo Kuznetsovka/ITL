@@ -71,7 +71,8 @@ class ActionServiceImplTest {
     @RepeatedTest(10)
     void addArrivalWagons_When_Station_NotExist() {
         final int MAX_NUMBER_OF_ELEMENTS = 20;
-        String errorMsg = "Вагоны не могут быть приняты! Указанный путь не существует на указанной станции";
+        String errorMsg1 = "Вагоны не могут быть приняты! Указанный путь не существует на указанной станции";
+        String errorMsg2 = "Вагоны не могут быть приняты!В json не указаны вагоны.";
         List<Wagon> wagons = fakeGenerator.fakeWagonList(random.nextInt(MAX_NUMBER_OF_ELEMENTS));
         Station station = fakeGenerator.fakeStation();
         Road road = fakeGenerator.fakeRoad();
@@ -80,13 +81,15 @@ class ActionServiceImplTest {
                 .wagons(wagons)
                 .road(road)
                 .build();
-        assertEquals(errorMsg, service.addArrivalWagons(pojo));
+        String msg = (wagons.isEmpty()) ? errorMsg2 : errorMsg1;
+        assertEquals(msg, service.addArrivalWagons(pojo));
     }
 
     @RepeatedTest(10)
     void addArrivalWagons_When_Road_NotExist() {
         final int MAX_NUMBER_OF_ELEMENTS = 20;
-        String errorMsg = "Вагоны не могут быть приняты! Указанный путь не существует на указанной станции";
+        String errorMsg1 = "Вагоны не могут быть приняты! Указанный путь не существует на указанной станции";
+        String errorMsg2 = "Вагоны не могут быть приняты!В json не указаны вагоны.";
         List<Wagon> wagons = fakeGenerator.fakeWagonList(random.nextInt(MAX_NUMBER_OF_ELEMENTS));
         Station station = fakeGenerator.fakeStation();
         StationEntity entity = stationRepository.save(mapper.stationEntityFromDto(station));
@@ -97,7 +100,8 @@ class ActionServiceImplTest {
                 .wagons(wagons)
                 .road(road)
                 .build();
-        assertEquals(errorMsg, service.addArrivalWagons(pojo));
+        String msg = (wagons.isEmpty()) ? errorMsg2 : errorMsg1;
+        assertEquals(msg, service.addArrivalWagons(pojo));
     }
 
     @RepeatedTest(10)
@@ -117,8 +121,8 @@ class ActionServiceImplTest {
                 .wagons(wagons)
                 .road(road)
                 .build();
-        String error = (wagons.isEmpty()) ? errorMsg2 : errorMsg1;
-        assertEquals(error, service.addArrivalWagons(pojo));
+        String msg = (wagons.isEmpty()) ? errorMsg2 : errorMsg1;
+        assertEquals(msg, service.addArrivalWagons(pojo));
     }
 
     @RepeatedTest(1)
