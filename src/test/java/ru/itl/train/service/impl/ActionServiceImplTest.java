@@ -161,11 +161,11 @@ class ActionServiceImplTest {
 
     public static void assertDtoFieldsStation(StationEntity entity, Station dto) {
         assertEquals(entity.getName(), dto.getName());
-        if (entity.getRoad() != null && !entity.getRoad().isEmpty()) {
+        if (entity.getRoads() != null && !entity.getRoads().isEmpty()) {
             Set<RoadEntity> roadEntitySet = dto.getRoad().stream()
                     .map(mapper::roadEntityFromDto)
                     .collect(Collectors.toSet());
-            assertEquals(entity.getRoad(), roadEntitySet);
+            assertEquals(entity.getRoads(), roadEntitySet);
         }
     }
 }

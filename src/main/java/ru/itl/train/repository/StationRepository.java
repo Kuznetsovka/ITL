@@ -18,6 +18,6 @@ public interface StationRepository extends JpaRepository<StationEntity, Long> {
 
     StationEntity getById(Long id);
 
-    @Query("select s.road from StationEntity s inner join s.road r where r.number =:number and s.id = :id")
+    @Query("select s.roads from StationEntity s inner join s.roads r where r.number =:number and s.id = :id")
     Optional<RoadEntity> getRoadByNumberAndStationId(Long number, Long id);
 }

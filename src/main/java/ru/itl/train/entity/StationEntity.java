@@ -18,7 +18,7 @@ import java.util.Set;
 @Builder
 @Entity
 @Table(name = "tbl_station",
-        indexes =  @Index(name = "idx_tbl_station_name", columnList = "name"))
+        indexes = @Index(name = "idx_tbl_station_name", columnList = "name"))
 public class StationEntity {
 
     @Id
@@ -27,7 +27,9 @@ public class StationEntity {
 
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "station", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<RoadEntity> road;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "station_id")
+    private Set<RoadEntity> roads;
+
 
 }

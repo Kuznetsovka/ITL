@@ -54,7 +54,7 @@ public class MapperServiceImpl implements MapperService {
 
     @Override
     public Station stationDtoFromEntity(StationEntity entity) {
-        Set<Road> roads = entity.getRoad().stream()
+        Set<Road> roads = entity.getRoads().stream()
                 .map(this::roadDtoFromEntity)
                 .collect(Collectors.toSet());
         return Station.builder()
@@ -72,7 +72,7 @@ public class MapperServiceImpl implements MapperService {
         return StationEntity.builder()
                 .id(dto.getId())
                 .name(dto.getName())
-                .road(roads)
+                .roads(roads)
                 .build();
     }
 

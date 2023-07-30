@@ -24,7 +24,4 @@ public class RoadEntity {
     @Id
     @Column(nullable = false)
     private Long number;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private StationEntity station;
 }

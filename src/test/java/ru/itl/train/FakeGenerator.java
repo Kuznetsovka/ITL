@@ -2,8 +2,6 @@ package ru.itl.train;
 
 import com.github.javafaker.Faker;
 import com.github.javafaker.service.RandomService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.itl.train.dto.Road;
 import ru.itl.train.dto.Station;
 import ru.itl.train.dto.Wagon;
@@ -18,7 +16,6 @@ public class FakeGenerator {
 
     private final Random random = new Random();
     private final Faker faker = new Faker(new Locale("ru"), new RandomService());
-    private final PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     private long nextId = 1;
 
@@ -42,9 +39,8 @@ public class FakeGenerator {
 
     public Wagon fakeWagon() {
         return Wagon.builder()
-                .id(fakeId())
-                .weightWagon(BigDecimal.valueOf(random.nextInt(100_000_000) * 0.01)) // �� 0 �� 1_000_000
-                .loadCapacity(BigDecimal.valueOf(random.nextInt(100_000_000) * 0.01)) // �� 0 �� 1_000_000
+                .weightWagon(BigDecimal.valueOf(random.nextInt(100_000_000) * 0.01)) // от 0 до 1_000_000
+                .loadCapacity(BigDecimal.valueOf(random.nextInt(100_000_000) * 0.01)) // от 0 до 1_000_000
                 .type(faker.funnyName().name())
                 .number(random.nextLong(100_000_000))
                 .build();
