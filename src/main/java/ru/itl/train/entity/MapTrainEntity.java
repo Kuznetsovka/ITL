@@ -30,7 +30,7 @@ public class MapTrainEntity {
     private RoadEntity road;
 
     @Column
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_tbl_map_train_order_wagon"))
     @OrderBy("order")
     private Set<PartTrainEntity> orderWagon;

@@ -1,7 +1,9 @@
 package ru.itl.train.service;
 
 import ru.itl.train.dto.MapTrain;
+import ru.itl.train.dto.PartTrain;
 import ru.itl.train.dto.Wagon;
+import ru.itl.train.entity.MapTrainEntity;
 import ru.itl.train.entity.RoadEntity;
 
 import java.util.List;
@@ -22,4 +24,6 @@ public interface MapTrainService {
     MapTrain save(MapTrain mapTrain);
 
     Optional<MapTrain> addWagons(RoadEntity roadNumber, List<Wagon> wagons);
+
+    Optional<MapTrainEntity> getRoadByPartTrains(List<PartTrain> partTrains);
 }

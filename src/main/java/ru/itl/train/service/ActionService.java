@@ -1,6 +1,7 @@
 package ru.itl.train.service;
 
 import ru.itl.train.dto.ArrivalWagonPojo;
+import ru.itl.train.dto.ChangeWagonPojo;
 
 /**
  * @author Kuznetsovka 29.07.2023
@@ -8,7 +9,7 @@ import ru.itl.train.dto.ArrivalWagonPojo;
 public interface ActionService {
     String addArrivalWagons(ArrivalWagonPojo arrivalWagonPojo);
 
-    String changeWagons(ArrivalWagonPojo arrivalWagonPojo);
+    String changeWagons(ChangeWagonPojo changeWagonPojo);
 
     String departureWagons(ArrivalWagonPojo arrivalWagonPojo);
 

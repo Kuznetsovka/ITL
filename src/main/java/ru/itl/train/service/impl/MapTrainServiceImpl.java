@@ -7,12 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itl.train.dto.MapTrain;
+import ru.itl.train.dto.PartTrain;
 import ru.itl.train.dto.Wagon;
 import ru.itl.train.entity.MapTrainEntity;
 import ru.itl.train.entity.PartTrainEntity;
 import ru.itl.train.entity.RoadEntity;
 import ru.itl.train.entity.WagonEntity;
 import ru.itl.train.repository.MapTrainRepository;
+import ru.itl.train.repository.WagonRepository;
 import ru.itl.train.service.MapTrainService;
 import ru.itl.train.service.MapperService;
 
@@ -29,6 +31,8 @@ import java.util.stream.Collectors;
 public class MapTrainServiceImpl implements MapTrainService {
 
     private final MapTrainRepository repository;
+
+    private final WagonRepository wagonRepository;
 
     private final MapperService mapper;
 
@@ -102,5 +106,11 @@ public class MapTrainServiceImpl implements MapTrainService {
         mapTrainEntity.setOrderWagon(oldPartTrain);
         mapTrainEntity = repository.save(mapTrainEntity);
         return Optional.of(mapper.mapTrainDtoFromEntity(mapTrainEntity));
+    }
+
+    @Override
+    public Optional<MapTrainEntity> getRoadByPartTrains(List<PartTrain> partTrains) {
+        List<Long> orders = partTrains.stream().map(PartTrain::getOrder).collect(Collectors.toList());
+        return repository.getRoadByOrderWagonIn(orders);
     }
 }

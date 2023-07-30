@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.itl.train.dto.ArrivalWagonPojo;
+import ru.itl.train.dto.ChangeWagonPojo;
 import ru.itl.train.service.ActionService;
 
 /**
@@ -38,6 +39,23 @@ public class ActionController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> arrivalWagon(@RequestBody ArrivalWagonPojo arrivalWagonPojo) {
         String msg = actionService.addArrivalWagons(arrivalWagonPojo);
+        return new ResponseEntity<>(msg, HttpStatus.OK);
+    }
+
+    /**
+     * Операция перестановки вагонов внутри станции. На входе список вагонов и путь на который они будут перемещены.
+     * Вагоны могут быть перемещены только в начало или конец состава.
+     *
+     * @param changeWagonPojo - Pojo класс для получения информации по запрашиваемым действиям
+     * @return Response о действии перестановки
+     */
+    @Operation(
+            summary = "Операция перестановки вагонов",
+            description = "Операция перестановки вагонов. На входе список вагонов и путь на который они будут перемещены.")
+    @PostMapping(value = "/wagon/change")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<String> changeWagon(@RequestBody ChangeWagonPojo changeWagonPojo) {
+        String msg = actionService.changeWagons(changeWagonPojo);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 }

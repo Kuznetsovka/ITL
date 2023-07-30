@@ -17,21 +17,27 @@ public class FakeGenerator {
     private final Random random = new Random();
     private final Faker faker = new Faker(new Locale("ru"), new RandomService());
 
-    private long nextId = 1;
+    private final long roadId = 1;
 
-    public long fakeId() {
-        return nextId++;
+
+    private final long stationId = 1;
+
+
+    private final long wagonId = 1;
+
+    public long fakeId(Long id) {
+        return id++;
     }
 
     public Road fakeRoad() {
         return Road.builder()
-                .number(fakeId())
+                .number(fakeId(roadId))
                 .build();
     }
 
     public Station fakeStation() {
         return Station.builder()
-                .id(fakeId())
+                .id(fakeId(stationId))
                 .name(faker.address().cityName())
                 .road(new HashSet<>())
                 .build();
@@ -39,6 +45,7 @@ public class FakeGenerator {
 
     public Wagon fakeWagon() {
         return Wagon.builder()
+                .id(fakeId(wagonId))
                 .weightWagon(BigDecimal.valueOf(random.nextInt(100_000_000) * 0.01)) // от 0 до 1_000_000
                 .loadCapacity(BigDecimal.valueOf(random.nextInt(100_000_000) * 0.01)) // от 0 до 1_000_000
                 .type(faker.funnyName().name())
