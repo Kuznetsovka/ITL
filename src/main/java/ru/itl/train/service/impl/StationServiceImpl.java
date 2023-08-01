@@ -96,8 +96,9 @@ public class StationServiceImpl implements StationService {
             return Collections.emptyList();
 
         //Проверка находятся ли вагоны в середине или нет
-        Long maxOrder = mapTrainService.getMaxOrder();
-        if (!orders.get(0).equals(1L) || !orders.get(orders.size() - 1).equals(maxOrder))
+        List<Long> minAndMax = mapTrainService.getMinAndMaxOrder();
+        if (minAndMax != null && !minAndMax.isEmpty() &&
+                !orders.get(0).equals(minAndMax.get(0)) || !orders.get(orders.size() - 1).equals(minAndMax.get(1)))
             return Collections.emptyList();
 
         List<MapTrainEntity> mapTrainEntities = mapTrainService.getRoadByPartTrains(partTrains);

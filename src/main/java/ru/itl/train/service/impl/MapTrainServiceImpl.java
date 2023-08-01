@@ -111,7 +111,7 @@ public class MapTrainServiceImpl implements MapTrainService {
     }
 
     @Override
-    public Long getMaxOrder() {
-        return repository.getMaxOrder();
+    public List<Long> getMinAndMaxOrder() {
+        return repository.getMinAndMaxOrder();
     }
 }

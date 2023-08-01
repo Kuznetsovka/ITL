@@ -27,5 +27,5 @@ public interface MapTrainService {
 
     List<MapTrainEntity> getRoadByPartTrains(List<PartTrain> partTrains);
 
-    Long getMaxOrder();
+    List<Long> getMinAndMaxOrder();
 }
