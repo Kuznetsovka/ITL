@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itl.train.dto.*;
+import ru.itl.train.entity.MapTrainEntity;
 import ru.itl.train.entity.RoadEntity;
 import ru.itl.train.service.ActionService;
 import ru.itl.train.service.MapTrainService;
@@ -63,8 +64,8 @@ public class ActionServiceImpl implements ActionService {
             log.error(msg);
             return msg;
         }
-        boolean wagonAndRoadOnDifferentStation = stationService.checkTrainOnStationByRoad(arrivalWagonPojo.getRoad().getNumber(), arrivalWagonPojo.getPartTrains());
-        if (wagonAndRoadOnDifferentStation) {
+        List<MapTrainEntity> mapTrainOnRoad = stationService.checkTrainOnStationByRoad(arrivalWagonPojo.getRoad().getNumber(), arrivalWagonPojo.getPartTrains());
+        if (mapTrainOnRoad.isEmpty()) {
             return "Вагоны не могут быть приняты! Указанный состав и путь находятся на разных станциях";
         }
         arrivalWagonPojo.getPartTrains().sort(Comparator.comparing(PartTrain::getOrder));

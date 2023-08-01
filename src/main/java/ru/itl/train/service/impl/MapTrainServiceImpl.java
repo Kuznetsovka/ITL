@@ -105,8 +105,13 @@ public class MapTrainServiceImpl implements MapTrainService {
     }
 
     @Override
-    public Long getRoadByPartTrains(List<PartTrain> partTrains) {
+    public List<MapTrainEntity> getRoadByPartTrains(List<PartTrain> partTrains) {
         List<Long> orders = partTrains.stream().map(PartTrain::getOrder).collect(Collectors.toList());
         return repository.getRoadByOrderWagonIn(orders);
+    }
+
+    @Override
+    public Long getMaxOrder() {
+        return repository.getMaxOrder();
     }
 }

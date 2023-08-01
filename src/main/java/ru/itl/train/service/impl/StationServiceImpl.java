@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itl.train.dto.PartTrain;
 import ru.itl.train.dto.Station;
+import ru.itl.train.entity.MapTrainEntity;
 import ru.itl.train.entity.RoadEntity;
 import ru.itl.train.entity.StationEntity;
 import ru.itl.train.repository.StationRepository;
@@ -15,10 +16,9 @@ import ru.itl.train.service.MapTrainService;
 import ru.itl.train.service.MapperService;
 import ru.itl.train.service.StationService;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 /**
  * @author Kuznetsovka 23.07.2023
@@ -90,11 +90,29 @@ public class StationServiceImpl implements StationService {
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     @Override
-    public boolean checkTrainOnStationByRoad(Long number, List<PartTrain> partTrains) {
-        Long roadNumber = mapTrainService.getRoadByPartTrains(partTrains);
-        if (roadNumber == null)
-            return true;
-        boolean isOnOneStation = repository.existStationRoads(Arrays.asList(roadNumber, number));
-        return !isOnOneStation;
+    public List<MapTrainEntity> checkTrainOnStationByRoad(Long number, List<PartTrain> partTrains) {
+        List<Long> orders = partTrains.stream().map(PartTrain::getOrder).sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+        if (checkMissingWagon(orders))
+            return Collections.emptyList();
+
+        //Проверка находятся ли вагоны в середине или нет
+        Long maxOrder = mapTrainService.getMaxOrder();
+        if (!orders.get(0).equals(1L) || !orders.get(orders.size() - 1).equals(maxOrder))
+            return Collections.emptyList();
+
+        List<MapTrainEntity> mapTrainEntities = mapTrainService.getRoadByPartTrains(partTrains);
+
+        if (mapTrainEntities.isEmpty())
+            return Collections.emptyList();
+
+        boolean isOnOneStation = repository.existStationRoads(Arrays.asList(mapTrainEntities.get(0).getRoad().getNumber(), number));
+        return (isOnOneStation) ? mapTrainEntities : Collections.emptyList();
+    }
+
+    @Override
+    public boolean checkMissingWagon(List<Long> orders) {
+        // todo Проверить эффективность подхода
+        List<Long> listWithoutMissing = LongStream.range(orders.get(0), orders.get(orders.size() - 1) + 1).boxed().collect(Collectors.toList());
+        return !Objects.equals(orders, listWithoutMissing);
     }
 }

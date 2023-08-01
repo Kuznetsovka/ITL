@@ -2,6 +2,7 @@ package ru.itl.train.service;
 
 import ru.itl.train.dto.PartTrain;
 import ru.itl.train.dto.Station;
+import ru.itl.train.entity.MapTrainEntity;
 import ru.itl.train.entity.RoadEntity;
 
 import java.util.List;
@@ -23,5 +24,7 @@ public interface StationService {
 
     Optional<RoadEntity> checkRoadOnStation(Long number, Long id);
 
-    boolean checkTrainOnStationByRoad(Long number, List<PartTrain> partTrains);
+    List<MapTrainEntity> checkTrainOnStationByRoad(Long number, List<PartTrain> partTrains);
+
+    boolean checkMissingWagon(List<Long> orders);
 }

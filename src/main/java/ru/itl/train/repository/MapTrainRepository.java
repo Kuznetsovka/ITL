@@ -14,6 +14,9 @@ public interface MapTrainRepository extends JpaRepository<MapTrainEntity, Long> 
     @Query("select map.orderWagon from MapTrainEntity map inner join map.road r where r.number = :number order by map.orderWagon.orderWagon")
     List<PartTrainEntity> getSetPartTrainByRoadNumber(Long number);
 
-    @Query("select distinct map.road.number from MapTrainEntity map inner join map.orderWagon ow where ow.orderWagon in (:orders)")
-    Long getRoadByOrderWagonIn(List<Long> orders);
+    @Query("select map from MapTrainEntity map inner join map.orderWagon ow where ow.orderWagon in (:orders)")
+    List<MapTrainEntity> getRoadByOrderWagonIn(List<Long> orders);
+
+    @Query("select max(ow.orderWagon) from MapTrainEntity map inner join map.orderWagon ow")
+    Long getMaxOrder();
 }
