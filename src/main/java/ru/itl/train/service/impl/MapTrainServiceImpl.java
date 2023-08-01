@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itl.train.dto.MapTrain;
 import ru.itl.train.dto.PartTrain;
+import ru.itl.train.dto.Road;
 import ru.itl.train.dto.Wagon;
 import ru.itl.train.entity.MapTrainEntity;
 import ru.itl.train.entity.PartTrainEntity;
@@ -111,7 +112,29 @@ public class MapTrainServiceImpl implements MapTrainService {
     }
 
     @Override
-    public List<Long> getMinAndMaxOrder() {
-        return repository.getMinAndMaxOrder();
+    public Long getMinOrder() {
+        return repository.getMinOrder();
+    }
+
+    @Override
+    public Long getMaxOrder() {
+        return repository.getMaxOrder();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public boolean changeWagons(List<MapTrainEntity> mapTrainOnRoad, Road road) {
+        List<MapTrainEntity> newMapTrains = new ArrayList<>();
+        RoadEntity roadEntity = mapper.roadEntityFromDto(road);
+        for (MapTrainEntity oldMapTrain : mapTrainOnRoad) {
+            MapTrainEntity newMapTrain = MapTrainEntity.builder()
+                    .road(roadEntity)
+                    .orderWagon(oldMapTrain.getOrderWagon())
+                    .build();
+            newMapTrains.add(newMapTrain);
+        }
+        repository.deleteAll(mapTrainOnRoad);
+        repository.saveAll(newMapTrains);
+        return true;
     }
 }

@@ -2,6 +2,7 @@ package ru.itl.train.service;
 
 import ru.itl.train.dto.MapTrain;
 import ru.itl.train.dto.PartTrain;
+import ru.itl.train.dto.Road;
 import ru.itl.train.dto.Wagon;
 import ru.itl.train.entity.MapTrainEntity;
 import ru.itl.train.entity.RoadEntity;
@@ -27,5 +28,9 @@ public interface MapTrainService {
 
     List<MapTrainEntity> getRoadByPartTrains(List<PartTrain> partTrains);
 
-    List<Long> getMinAndMaxOrder();
+    Long getMinOrder();
+
+    Long getMaxOrder();
+
+    boolean changeWagons(List<MapTrainEntity> mapTrainOnRoad, Road road);
 }

@@ -9,9 +9,9 @@ import ru.itl.train.entity.MapTrainEntity;
 import ru.itl.train.entity.RoadEntity;
 import ru.itl.train.service.ActionService;
 import ru.itl.train.service.MapTrainService;
+import ru.itl.train.service.RoadService;
 import ru.itl.train.service.StationService;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 public class ActionServiceImpl implements ActionService {
 
     private final StationService stationService;
+
+    private final RoadService roadService;
 
     private final MapTrainService mapTrainService;
 
@@ -66,19 +68,23 @@ public class ActionServiceImpl implements ActionService {
         }
         List<MapTrainEntity> mapTrainOnRoad = stationService.checkTrainOnStationByRoad(arrivalWagonPojo.getRoad().getNumber(), arrivalWagonPojo.getPartTrains());
         if (mapTrainOnRoad.isEmpty()) {
-            return "Вагоны не могут быть приняты! Указанный состав и путь находятся на разных станциях";
+            return "Вагоны не могут быть приняты! Указанный состав и путь находятся на разных станциях или вагоны находятся в середине состава";
         }
-        arrivalWagonPojo.getPartTrains().sort(Comparator.comparing(PartTrain::getOrder));
-        List<Wagon> sortedChangeWagon = arrivalWagonPojo.getPartTrains().stream()
+
+        mapTrainService.changeWagons(mapTrainOnRoad, arrivalWagonPojo.getRoad());
+
+        String numberWagons = arrivalWagonPojo.getPartTrains().stream()
                 .map(PartTrain::getWagon)
-                .collect(Collectors.toList());
+                .map(Wagon::getNumber)
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
 
-        Long minOrder = arrivalWagonPojo.getPartTrains().stream().min(Comparator.comparing(PartTrain::getOrder)).get().getOrder();
-
-//        Queue<PartTrainEntity> queue = changingMapTrain.get().getOrderWagon().stream().sorted(Comparator.comparing(PartTrainEntity::getOrder)).collect(Collectors.toCollection(ArrayDeque::new));
-
-        // Проверка нахождения вагонов в составе.
-        return null;
+        Long numberStation = arrivalWagonPojo.getRoad().getNumber();
+        if (numberStation == null) {
+            numberStation = roadService.getById(arrivalWagonPojo.getRoad().getNumber()).get().getNumber();
+        }
+        msg = String.format("Вагоны [%s] были перенесены на путь номер [%d]!", numberWagons, numberStation);
+        return msg;
     }
 
     @Override

@@ -17,7 +17,8 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "tbl_map_train",
-        indexes = @Index(name = "idx_tbl_map_train_road_id", columnList = "road_id"))
+        uniqueConstraints = @UniqueConstraint(
+                name = "bk_tbl_map_train_road_wagonOrder_idx", columnNames = {"road_id", "orderWagon"}))
 public class MapTrainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -22,6 +22,6 @@ public interface StationRepository extends JpaRepository<StationEntity, Long> {
     @Query("select r from StationEntity s inner join s.roads r where r.number =:number and s.id = :id")
     Optional<RoadEntity> getRoadByNumberAndStationId(Long number, Long id);
 
-    @Query("select (case when count(s) = 1 then true else false end) from StationEntity s inner join s.roads r where r.number in (:roads)")
+    @Query("select (case when count(distinct s.id) = 1 then true else false end) from StationEntity s inner join s.roads r where r.number in (:roads)")
     boolean existStationRoads(List<Long> roads);
 }

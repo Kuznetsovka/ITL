@@ -18,7 +18,7 @@ import javax.persistence.*;
 @Embeddable
 public class PartTrainEntity {
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private Long orderWagon;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -91,14 +91,17 @@ public class StationServiceImpl implements StationService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     @Override
     public List<MapTrainEntity> checkTrainOnStationByRoad(Long number, List<PartTrain> partTrains) {
+        //todo избавится от order в json и получать порядок исходя из имеющихся вагонов.
         List<Long> orders = partTrains.stream().map(PartTrain::getOrder).sorted(Comparator.naturalOrder()).collect(Collectors.toList());
         if (checkMissingWagon(orders))
             return Collections.emptyList();
 
         //Проверка находятся ли вагоны в середине или нет
-        List<Long> minAndMax = mapTrainService.getMinAndMaxOrder();
-        if (minAndMax != null && !minAndMax.isEmpty() &&
-                !orders.get(0).equals(minAndMax.get(0)) || !orders.get(orders.size() - 1).equals(minAndMax.get(1)))
+        Long minOrder = mapTrainService.getMinOrder();
+
+        Long maxOrder = mapTrainService.getMaxOrder();
+        if (minOrder != null && maxOrder != null &&
+                !orders.get(0).equals(minOrder) && !orders.get(orders.size() - 1).equals(maxOrder))
             return Collections.emptyList();
 
         List<MapTrainEntity> mapTrainEntities = mapTrainService.getRoadByPartTrains(partTrains);
