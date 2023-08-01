@@ -16,5 +16,4 @@ import lombok.NoArgsConstructor;
 public class Road {
 
     private Long number;
-    private Station station;
 }

@@ -5,9 +5,6 @@ import ru.itl.train.dto.*;
 import ru.itl.train.entity.*;
 import ru.itl.train.service.MapperService;
 
-import java.util.ArrayDeque;
-import java.util.Comparator;
-import java.util.Deque;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -79,7 +76,7 @@ public class MapperServiceImpl implements MapperService {
     @Override
     public PartTrain partTrainDtoFromEntity(PartTrainEntity entity) {
         return PartTrain.builder()
-                .order(entity.getOrder())
+                .order(entity.getOrderWagon())
                 .wagon(wagonDtoFromEntity(entity.getWagon()))
                 .build();
     }
@@ -87,7 +84,7 @@ public class MapperServiceImpl implements MapperService {
     @Override
     public PartTrainEntity partTrainEntityFromDto(PartTrain dto) {
         return PartTrainEntity.builder()
-                .order(dto.getOrder())
+                .orderWagon(dto.getOrder())
                 .wagon(wagonEntityFromDto(dto.getWagon()))
                 .build();
     }
@@ -112,26 +109,17 @@ public class MapperServiceImpl implements MapperService {
 
     @Override
     public MapTrain mapTrainDtoFromEntity(MapTrainEntity entity) {
-        Set<PartTrain> parts = entity.getOrderWagon().stream()
-                .map(this::partTrainDtoFromEntity)
-                .collect(Collectors.toSet());
-        Deque<PartTrain> deque = entity.getOrderWagon()
-                .stream()
-                .map(this::partTrainDtoFromEntity)
-                .sorted(Comparator.comparing(PartTrain::getOrder))
-                .collect(Collectors.toCollection(ArrayDeque::new));
+        PartTrain part = partTrainDtoFromEntity(entity.getOrderWagon());
         return MapTrain.builder()
                 .id(entity.getId())
-                .orderWagon(deque)
+                .orderWagon(part)
                 .road(roadDtoFromEntity(entity.getRoad()))
                 .build();
     }
 
     @Override
     public MapTrainEntity mapTrainEntityFromDto(MapTrain dto) {
-        Set<PartTrainEntity> parts = dto.getOrderWagon().stream()
-                .map(this::partTrainEntityFromDto)
-                .collect(Collectors.toSet());
+        PartTrainEntity parts = partTrainEntityFromDto(dto.getOrderWagon());
         return MapTrainEntity.builder()
                 .id(dto.getId())
                 .orderWagon(parts)

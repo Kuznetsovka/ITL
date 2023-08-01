@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
 
 /**
  * Карта расположения подвижного состава
@@ -29,10 +28,7 @@ public class MapTrainEntity {
             foreignKey = @ForeignKey(name = "fk_tbl_map_train_road"))
     private RoadEntity road;
 
-    @Column
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_tbl_map_train_order_wagon"))
-    @OrderBy("order")
-    private Set<PartTrainEntity> orderWagon;
+    @Embedded
+    private PartTrainEntity orderWagon;
 
 }

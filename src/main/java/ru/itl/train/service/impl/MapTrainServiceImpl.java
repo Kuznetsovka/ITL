@@ -18,8 +18,9 @@ import ru.itl.train.repository.WagonRepository;
 import ru.itl.train.service.MapTrainService;
 import ru.itl.train.service.MapperService;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -84,32 +85,27 @@ public class MapTrainServiceImpl implements MapTrainService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public Optional<MapTrain> addWagons(RoadEntity road, List<Wagon> wagons) {
-        // Получаем карту составов на пути
-        Optional<MapTrainEntity> mapTrain = repository.findByRoad_Number(road.getNumber());
-        //Если карта составов есть и на нем есть вагоны, получаем их
-        AtomicReference<Set<PartTrainEntity>> partTrain = new AtomicReference<>(new HashSet<>());
-        mapTrain.ifPresent(map -> partTrain.set(map.getOrderWagon()));
+    public List<MapTrain> addWagons(RoadEntity road, List<Wagon> wagons) {
+        // Получаем отсортированный список вагонов
+        List<PartTrainEntity> oldPartTrain = repository.getSetPartTrainByRoadNumber(road.getNumber());
         //Создаем новый состав из полученных вагонов и возможных вагонов на пути
-        Queue<PartTrainEntity> newPartTrain = new ArrayDeque<>();
-        long lastOrder = partTrain.get().stream().map(PartTrainEntity::getOrder).max(Comparator.naturalOrder()).orElse(0L);
+        long lastOrder = (oldPartTrain.isEmpty()) ? 0L : oldPartTrain.get(oldPartTrain.size() - 1).getOrderWagon();
+        List<MapTrainEntity> list = new ArrayList<>();
         for (Wagon dto : wagons) {
             WagonEntity wagon = mapper.wagonEntityFromDto(dto);
-            newPartTrain.add(new PartTrainEntity(++lastOrder, wagon));
+            PartTrainEntity newPartTrain = new PartTrainEntity(++lastOrder, wagon);
+            MapTrainEntity mapTrainEntity = new MapTrainEntity();
+            mapTrainEntity.setRoad(road);
+            mapTrainEntity.setOrderWagon(newPartTrain);
+            list.add(mapTrainEntity);
         }
-        Set<PartTrainEntity> oldPartTrain = partTrain.get();
-        //Добавляем вагоны к составу
-        oldPartTrain.addAll(newPartTrain);
 
-        MapTrainEntity mapTrainEntity = mapTrain.orElse(new MapTrainEntity());
-        mapTrainEntity.setRoad(road);
-        mapTrainEntity.setOrderWagon(oldPartTrain);
-        mapTrainEntity = repository.save(mapTrainEntity);
-        return Optional.of(mapper.mapTrainDtoFromEntity(mapTrainEntity));
+        List<MapTrainEntity> savedMapTrans = repository.saveAll(list);
+        return savedMapTrans.stream().map(mapper::mapTrainDtoFromEntity).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<MapTrainEntity> getRoadByPartTrains(List<PartTrain> partTrains) {
+    public Long getRoadByPartTrains(List<PartTrain> partTrains) {
         List<Long> orders = partTrains.stream().map(PartTrain::getOrder).collect(Collectors.toList());
         return repository.getRoadByOrderWagonIn(orders);
     }

@@ -12,18 +12,14 @@ import javax.persistence.*;
  * @author Kuznetsovka 20.07.2023
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@Entity
-@Table(name = "tbl_part_train",
-        uniqueConstraints = @UniqueConstraint(
-                name = "bk_tbl_part_train_order_wagon_id_idx", columnNames = {"wagon_id"}))
+@Embeddable
 public class PartTrainEntity {
 
-    @Id
-    @Column(name = "id", nullable = false)
-    private Long order;
+    @Column(nullable = false, unique = true)
+    private Long orderWagon;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "wagon_id")

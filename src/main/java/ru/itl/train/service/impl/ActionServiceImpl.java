@@ -5,14 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itl.train.dto.*;
-import ru.itl.train.entity.MapTrainEntity;
-import ru.itl.train.entity.PartTrainEntity;
 import ru.itl.train.entity.RoadEntity;
 import ru.itl.train.service.ActionService;
 import ru.itl.train.service.MapTrainService;
 import ru.itl.train.service.StationService;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +39,7 @@ public class ActionServiceImpl implements ActionService {
         if (road.isEmpty()) {
             return "Вагоны не могут быть приняты! Указанный путь не существует на указанной станции";
         }
-        Optional<MapTrain> mapTrain = mapTrainService.addWagons(road.get(), arrivalWagonPojo.getWagons());
+        List<MapTrain> mapTrain = mapTrainService.addWagons(road.get(), arrivalWagonPojo.getWagons());
         if (mapTrain.isEmpty()) {
             return "Вагоны не могут быть приняты! Указанный путь не существует на указанной станции";
         }
@@ -49,7 +49,7 @@ public class ActionServiceImpl implements ActionService {
                 .collect(Collectors.joining(","));
         String numberStation = arrivalWagonPojo.getStation().getName();
         if (numberStation == null) {
-            stationService.getById(arrivalWagonPojo.getStation().getId()).get().getName();
+            numberStation = stationService.getById(arrivalWagonPojo.getStation().getId()).get().getName();
         }
         msg = String.format("Вагоны [%s] приняты на станцию [%s]!", numberWagons, numberStation);
         return msg;
@@ -63,17 +63,18 @@ public class ActionServiceImpl implements ActionService {
             log.error(msg);
             return msg;
         }
-        Optional<MapTrainEntity> changingMapTrain = stationService.checkTrainOnStationByRoad(arrivalWagonPojo.getRoad().getNumber(), arrivalWagonPojo.getPartTrains());
-        if (changingMapTrain.isEmpty()) {
+        boolean wagonAndRoadOnDifferentStation = stationService.checkTrainOnStationByRoad(arrivalWagonPojo.getRoad().getNumber(), arrivalWagonPojo.getPartTrains());
+        if (wagonAndRoadOnDifferentStation) {
             return "Вагоны не могут быть приняты! Указанный состав и путь находятся на разных станциях";
         }
         arrivalWagonPojo.getPartTrains().sort(Comparator.comparing(PartTrain::getOrder));
         List<Wagon> sortedChangeWagon = arrivalWagonPojo.getPartTrains().stream()
                 .map(PartTrain::getWagon)
                 .collect(Collectors.toList());
+
         Long minOrder = arrivalWagonPojo.getPartTrains().stream().min(Comparator.comparing(PartTrain::getOrder)).get().getOrder();
 
-        Queue<PartTrainEntity> queue = changingMapTrain.get().getOrderWagon().stream().sorted(Comparator.comparing(PartTrainEntity::getOrder)).collect(Collectors.toCollection(ArrayDeque::new));
+//        Queue<PartTrainEntity> queue = changingMapTrain.get().getOrderWagon().stream().sorted(Comparator.comparing(PartTrainEntity::getOrder)).collect(Collectors.toCollection(ArrayDeque::new));
 
         // Проверка нахождения вагонов в составе.
         return null;

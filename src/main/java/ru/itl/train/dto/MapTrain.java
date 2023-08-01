@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Queue;
-
 /**
  * Карта расположения подвижного состава
  *
@@ -22,6 +20,6 @@ public class MapTrain {
 
     private Road road;
 
-    private Queue<PartTrain> orderWagon;
+    private PartTrain orderWagon;
 
 }

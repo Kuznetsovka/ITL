@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itl.train.dto.PartTrain;
 import ru.itl.train.dto.Station;
-import ru.itl.train.entity.MapTrainEntity;
 import ru.itl.train.entity.RoadEntity;
 import ru.itl.train.entity.StationEntity;
 import ru.itl.train.repository.StationRepository;
@@ -19,7 +18,6 @@ import ru.itl.train.service.StationService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -92,13 +90,11 @@ public class StationServiceImpl implements StationService {
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     @Override
-    public Optional<MapTrainEntity> checkTrainOnStationByRoad(Long number, List<PartTrain> partTrains) {
-        Optional<MapTrainEntity> roadWithWagons = mapTrainService.getRoadByPartTrains(partTrains);
-        AtomicLong roadWithWagonsNumber = null;
-        roadWithWagons.ifPresent(road -> roadWithWagonsNumber.set(road.getRoad().getNumber()));
-        if (roadWithWagonsNumber == null)
-            return Optional.empty();
-        boolean isOnOneStation = repository.existStationRoads(Arrays.asList(roadWithWagonsNumber.get(), number));
-        return (isOnOneStation) ? roadWithWagons : Optional.empty();
+    public boolean checkTrainOnStationByRoad(Long number, List<PartTrain> partTrains) {
+        Long roadNumber = mapTrainService.getRoadByPartTrains(partTrains);
+        if (roadNumber == null)
+            return true;
+        boolean isOnOneStation = repository.existStationRoads(Arrays.asList(roadNumber, number));
+        return !isOnOneStation;
     }
 }
