@@ -15,6 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ChangeWagonPojo {
-    private List<PartTrain> partTrains;
+    private List<Wagon> wagons;
     private Road road;
 }

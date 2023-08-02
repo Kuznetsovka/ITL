@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itl.train.dto.MapTrain;
-import ru.itl.train.dto.PartTrain;
 import ru.itl.train.dto.Road;
 import ru.itl.train.dto.Wagon;
 import ru.itl.train.entity.MapTrainEntity;
@@ -106,19 +105,13 @@ public class MapTrainServiceImpl implements MapTrainService {
     }
 
     @Override
-    public List<MapTrainEntity> getRoadByPartTrains(List<PartTrain> partTrains) {
-        List<Long> orders = partTrains.stream().map(PartTrain::getOrder).collect(Collectors.toList());
-        return repository.getRoadByOrderWagonIn(orders);
+    public Long getMinOrderByRoadNumber(Long number) {
+        return repository.getMinOrder(number);
     }
 
     @Override
-    public Long getMinOrder() {
-        return repository.getMinOrder();
-    }
-
-    @Override
-    public Long getMaxOrder() {
-        return repository.getMaxOrder();
+    public Long getMaxOrderByRoadNumber(Long number) {
+        return repository.getMaxOrder(number);
     }
 
     @Override
@@ -136,5 +129,10 @@ public class MapTrainServiceImpl implements MapTrainService {
         repository.deleteAll(mapTrainOnRoad);
         repository.saveAll(newMapTrains);
         return true;
+    }
+
+    @Override
+    public List<MapTrainEntity> getOrderByWagonNumber(List<Long> wagonNumbers) {
+        return repository.getOrderByWagonNumber(wagonNumbers);
     }
 }

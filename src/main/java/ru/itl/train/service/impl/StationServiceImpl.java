@@ -6,9 +6,10 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.itl.train.dto.PartTrain;
 import ru.itl.train.dto.Station;
+import ru.itl.train.dto.Wagon;
 import ru.itl.train.entity.MapTrainEntity;
+import ru.itl.train.entity.PartTrainEntity;
 import ru.itl.train.entity.RoadEntity;
 import ru.itl.train.entity.StationEntity;
 import ru.itl.train.repository.StationRepository;
@@ -90,21 +91,26 @@ public class StationServiceImpl implements StationService {
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     @Override
-    public List<MapTrainEntity> checkTrainOnStationByRoad(Long number, List<PartTrain> partTrains) {
-        //todo избавится от order в json и получать порядок исходя из имеющихся вагонов.
-        List<Long> orders = partTrains.stream().map(PartTrain::getOrder).sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+    public List<MapTrainEntity> checkTrainOnStationByRoad(Long number, List<Wagon> wagon) {
+        List<Long> wagonNumbers = wagon.stream().map(Wagon::getNumber).collect(Collectors.toList());
+
+        List<MapTrainEntity> mapTrainEntities = mapTrainService.getOrderByWagonNumber(wagonNumbers);
+        List<Long> orders = mapTrainEntities.stream()
+                .map(MapTrainEntity::getOrderWagon)
+                .map(PartTrainEntity::getOrderWagon)
+                .collect(Collectors.toList());
+
         if (checkMissingWagon(orders))
             return Collections.emptyList();
 
         //Проверка находятся ли вагоны в середине или нет
-        Long minOrder = mapTrainService.getMinOrder();
+        Long roadNumberFrom = mapTrainEntities.get(0).getRoad().getNumber();
+        Long minOrder = mapTrainService.getMinOrderByRoadNumber(roadNumberFrom);
 
-        Long maxOrder = mapTrainService.getMaxOrder();
+        Long maxOrder = mapTrainService.getMaxOrderByRoadNumber(roadNumberFrom);
         if (minOrder != null && maxOrder != null &&
                 !orders.get(0).equals(minOrder) && !orders.get(orders.size() - 1).equals(maxOrder))
             return Collections.emptyList();
-
-        List<MapTrainEntity> mapTrainEntities = mapTrainService.getRoadByPartTrains(partTrains);
 
         if (mapTrainEntities.isEmpty())
             return Collections.emptyList();
