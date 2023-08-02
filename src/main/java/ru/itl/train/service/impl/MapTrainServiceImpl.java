@@ -117,6 +117,13 @@ public class MapTrainServiceImpl implements MapTrainService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean changeWagons(List<MapTrainEntity> mapTrainOnRoad, Road road) {
+        this.departureWagons(mapTrainOnRoad);
+        this.arriveWagons(mapTrainOnRoad, road);
+        return true;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void arriveWagons(List<MapTrainEntity> mapTrainOnRoad, Road road) {
         List<MapTrainEntity> newMapTrains = new ArrayList<>();
         RoadEntity roadEntity = mapper.roadEntityFromDto(road);
         for (MapTrainEntity oldMapTrain : mapTrainOnRoad) {
@@ -126,13 +133,17 @@ public class MapTrainServiceImpl implements MapTrainService {
                     .build();
             newMapTrains.add(newMapTrain);
         }
-        repository.deleteAll(mapTrainOnRoad);
         repository.saveAll(newMapTrains);
-        return true;
     }
 
     @Override
     public List<MapTrainEntity> getOrderByWagonNumber(List<Long> wagonNumbers) {
         return repository.getOrderByWagonNumber(wagonNumbers);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void departureWagons(List<MapTrainEntity> mapTrains) {
+        repository.deleteAll(mapTrains);
     }
 }

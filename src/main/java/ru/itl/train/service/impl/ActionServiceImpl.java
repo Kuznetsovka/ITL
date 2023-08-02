@@ -4,17 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.itl.train.dto.*;
+import ru.itl.train.dto.ArrivalWagonPojo;
+import ru.itl.train.dto.ChangeWagonPojo;
+import ru.itl.train.dto.MapTrain;
+import ru.itl.train.dto.Wagon;
 import ru.itl.train.entity.MapTrainEntity;
 import ru.itl.train.entity.RoadEntity;
 import ru.itl.train.service.ActionService;
 import ru.itl.train.service.MapTrainService;
 import ru.itl.train.service.RoadService;
 import ru.itl.train.service.StationService;
+import ru.itl.train.service.enums.SideTrain;
+import ru.itl.train.utils.MessageUtils;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author Kuznetsovka 29.07.2023
@@ -33,23 +37,20 @@ public class ActionServiceImpl implements ActionService {
     @Transactional
     @Override
     public String addArrivalWagons(ArrivalWagonPojo arrivalWagonPojo) {
-        String msg = checkArrivalAction(arrivalWagonPojo);
+        String msg = MessageUtils.checkArrivalAction(arrivalWagonPojo);
         if (msg != null) {
             log.error(msg);
             return msg;
         }
         Optional<RoadEntity> road = stationService.checkRoadOnStation(arrivalWagonPojo.getRoad().getNumber(), arrivalWagonPojo.getStation().getId());
         if (road.isEmpty()) {
-            return "Вагоны не могут быть приняты! Указанный путь не существует на указанной станции";
+            return String.join(" ", MessageUtils.MSG, MessageUtils.RESULT_ERROR_MSG_ROAD_ON_ANOTHER_STATION);
         }
         List<MapTrain> mapTrain = mapTrainService.addWagons(road.get(), arrivalWagonPojo.getWagons());
         if (mapTrain.isEmpty()) {
-            return "Вагоны не могут быть приняты! Указанный путь не существует на указанной станции";
+            return String.join(" ", MessageUtils.MSG, MessageUtils.RESULT_ERROR_MSG_ROAD_ON_ANOTHER_STATION);
         }
-        String numberWagons = arrivalWagonPojo.getWagons().stream()
-                .map(Wagon::getNumber)
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
+        String numberWagons = Wagon.getListNumberWagon(arrivalWagonPojo.getWagons());
         String numberStation = arrivalWagonPojo.getStation().getName();
         if (numberStation == null) {
             numberStation = stationService.getById(arrivalWagonPojo.getStation().getId()).get().getName();
@@ -61,22 +62,21 @@ public class ActionServiceImpl implements ActionService {
     @Transactional
     @Override
     public String changeWagons(ChangeWagonPojo changeWagonPojo) {
-        String msg = checkArrivalAction(changeWagonPojo);
+        String msg = MessageUtils.checkArrivalAction(changeWagonPojo);
         if (msg != null) {
             log.error(msg);
             return msg;
         }
-        List<MapTrainEntity> mapTrainOnRoad = stationService.checkTrainOnStationByRoad(changeWagonPojo.getRoad().getNumber(), changeWagonPojo.getWagons());
+        List<MapTrainEntity> mapTrainOnRoad = stationService.checkTrainOnStationByRoad(changeWagonPojo.getRoad().getNumber(), changeWagonPojo.getWagons(), SideTrain.BOTH);
         if (mapTrainOnRoad.isEmpty()) {
-            return "Вагоны не могут быть приняты! Указанный состав и путь находятся на разных станциях или вагоны находятся в середине состава";
+            return String.join(" ", MessageUtils.MSG, MessageUtils.RESULT_ERROR_MSG_TRAIN_ON_ANOTHER_STATION);
         }
 
-        mapTrainService.changeWagons(mapTrainOnRoad, changeWagonPojo.getRoad());
+        boolean isChange = mapTrainService.changeWagons(mapTrainOnRoad, changeWagonPojo.getRoad());
+        if (!isChange)
+            return MessageUtils.MSG;
 
-        String numberWagons = changeWagonPojo.getWagons().stream()
-                .map(Wagon::getNumber)
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
+        String numberWagons = Wagon.getListNumberWagon(changeWagonPojo.getWagons());
 
         Long numberStation = changeWagonPojo.getRoad().getNumber();
         if (numberStation == null) {
@@ -87,32 +87,21 @@ public class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public String departureWagons(ArrivalWagonPojo arrivalWagonPojo) {
-        return null;
-    }
-
-    private String checkArrivalAction(ArrivalWagonPojo arrivalWagonPojo) {
-        String msg = "Вагоны не могут быть приняты!";
-        if (arrivalWagonPojo.getStation() == null || arrivalWagonPojo.getStation().getId() == null) {
-            return String.join("", msg, "В json не указана станция или не указан id станции.");
+    public String departureWagons(List<Wagon> wagons) {
+        String msg = MessageUtils.checkListWagons(wagons);
+        if (msg != null) {
+            log.error(msg);
+            return msg;
         }
-        String res = checkListsRoadAndWagon(arrivalWagonPojo.getRoad(), msg, arrivalWagonPojo.getWagons(), "В json не указаны вагоны.");
-        return res;
-    }
-
-    private static String checkListsRoadAndWagon(Road arrivalWagonPojo, String msg, List<Wagon> arrivalWagonPojo1, String x) {
-        if (arrivalWagonPojo == null || arrivalWagonPojo.getNumber() == null) {
-            return String.join("", msg, "В json не указан путь или не указан номер.");
+        List<MapTrainEntity> mapTrains = stationService.checkPlaceWagonAndOrdering(wagons, SideTrain.HEAD);
+        if (mapTrains.isEmpty()) {
+            return String.join(" ", MessageUtils.MSG, MessageUtils.RESULT_ERROR_MSG_WAGON_NOT_HEAD);
         }
-        if (arrivalWagonPojo1 == null || arrivalWagonPojo1.isEmpty()) {
-            return String.join("", msg, x);
-        }
-        return null;
-    }
+        mapTrainService.departureWagons(mapTrains);
 
-    private String checkArrivalAction(ChangeWagonPojo changeWagonPojo) {
-        String msg = "Вагоны не могут быть приняты!";
-        String res = checkListsRoadAndWagon(changeWagonPojo.getRoad(), msg, changeWagonPojo.getWagons(), "В json не указан перемещаемый состав.");
-        return res;
+        String numberWagons = Wagon.getListNumberWagon(wagons);
+
+        msg = String.format("Вагоны [%s] отбыли на пути РЖД!", numberWagons);
+        return msg;
     }
 }

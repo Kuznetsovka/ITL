@@ -16,6 +16,7 @@ import ru.itl.train.repository.StationRepository;
 import ru.itl.train.service.MapTrainService;
 import ru.itl.train.service.MapperService;
 import ru.itl.train.service.StationService;
+import ru.itl.train.service.enums.SideTrain;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -91,7 +92,15 @@ public class StationServiceImpl implements StationService {
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     @Override
-    public List<MapTrainEntity> checkTrainOnStationByRoad(Long number, List<Wagon> wagon) {
+    public List<MapTrainEntity> checkTrainOnStationByRoad(Long number, List<Wagon> wagon, SideTrain side) {
+        List<MapTrainEntity> mapTrainEntities = checkPlaceWagonAndOrdering(wagon, side);
+
+        boolean isOnOneStation = repository.existStationRoads(Arrays.asList(mapTrainEntities.get(0).getRoad().getNumber(), number));
+        return (isOnOneStation) ? mapTrainEntities : Collections.emptyList();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    public List<MapTrainEntity> checkPlaceWagonAndOrdering(List<Wagon> wagon, SideTrain side) {
         List<Long> wagonNumbers = wagon.stream().map(Wagon::getNumber).collect(Collectors.toList());
 
         List<MapTrainEntity> mapTrainEntities = mapTrainService.getOrderByWagonNumber(wagonNumbers);
@@ -103,20 +112,32 @@ public class StationServiceImpl implements StationService {
         if (checkMissingWagon(orders))
             return Collections.emptyList();
 
+        List<MapTrainEntity> mapTrainList = checkPlaceWagons(side, mapTrainEntities, orders);
+        return (mapTrainList == null || mapTrainEntities.isEmpty())
+                ? Collections.emptyList() : mapTrainList;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    @Override
+    public List<MapTrainEntity> checkPlaceWagons(SideTrain side, List<MapTrainEntity> mapTrainEntities, List<Long> orders) {
         //Проверка находятся ли вагоны в середине или нет
         Long roadNumberFrom = mapTrainEntities.get(0).getRoad().getNumber();
-        Long minOrder = mapTrainService.getMinOrderByRoadNumber(roadNumberFrom);
-
-        Long maxOrder = mapTrainService.getMaxOrderByRoadNumber(roadNumberFrom);
-        if (minOrder != null && maxOrder != null &&
-                !orders.get(0).equals(minOrder) && !orders.get(orders.size() - 1).equals(maxOrder))
-            return Collections.emptyList();
-
-        if (mapTrainEntities.isEmpty())
-            return Collections.emptyList();
-
-        boolean isOnOneStation = repository.existStationRoads(Arrays.asList(mapTrainEntities.get(0).getRoad().getNumber(), number));
-        return (isOnOneStation) ? mapTrainEntities : Collections.emptyList();
+        if (side == SideTrain.BOTH) {
+            Long minOrder = mapTrainService.getMinOrderByRoadNumber(roadNumberFrom);
+            Long maxOrder = mapTrainService.getMaxOrderByRoadNumber(roadNumberFrom);
+            if (minOrder != null && maxOrder != null &&
+                    !orders.get(0).equals(minOrder) && !orders.get(orders.size() - 1).equals(maxOrder))
+                return Collections.emptyList();
+        } else if (side == SideTrain.HEAD) {
+            Long minOrder = mapTrainService.getMinOrderByRoadNumber(roadNumberFrom);
+            if (minOrder != null && !orders.get(0).equals(minOrder))
+                return Collections.emptyList();
+        } else if (side == SideTrain.TAIL) {
+            Long maxOrder = mapTrainService.getMaxOrderByRoadNumber(roadNumberFrom);
+            if (maxOrder != null && !orders.get(orders.size() - 1).equals(maxOrder))
+                return Collections.emptyList();
+        }
+        return null;
     }
 
     @Override

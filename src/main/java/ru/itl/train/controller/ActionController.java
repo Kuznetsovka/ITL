@@ -10,7 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.itl.train.dto.ArrivalWagonPojo;
 import ru.itl.train.dto.ChangeWagonPojo;
+import ru.itl.train.dto.Wagon;
 import ru.itl.train.service.ActionService;
+
+import java.util.List;
 
 /**
  * @author Kuznetsovka 29.07.2023
@@ -56,6 +59,19 @@ public class ActionController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> changeWagon(@RequestBody ChangeWagonPojo changeWagonPojo) {
         String msg = actionService.changeWagons(changeWagonPojo);
+        return new ResponseEntity<>(msg, HttpStatus.OK);
+    }
+
+    /**
+     * Операция убытия вагонов на сеть РЖД. Вагоны могут убывать только с начала состава.
+     */
+    @Operation(
+            summary = "убытия вагонов на сеть РЖД",
+            description = "Операция убытия вагонов на сеть РЖД. Вагоны могут убывать только с начала состава.")
+    @PostMapping(value = "/wagon/change")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<String> departureWagon(@RequestBody List<Wagon> wagon) {
+        String msg = actionService.departureWagons(wagon);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 }

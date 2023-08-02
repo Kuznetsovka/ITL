@@ -32,4 +32,6 @@ public interface MapTrainService {
     boolean changeWagons(List<MapTrainEntity> mapTrainOnRoad, Road road);
 
     List<MapTrainEntity> getOrderByWagonNumber(List<Long> wagonNumbers);
+
+    void departureWagons(List<MapTrainEntity> mapTrains);
 }

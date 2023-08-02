@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Паспорт вагонов (Номер, Тип, Вес тары, Грузоподъемность)
@@ -22,4 +24,11 @@ public class Wagon {
     private BigDecimal weightWagon;
     private BigDecimal loadCapacity;
 
+    public static String getListNumberWagon(List<Wagon> wagons) {
+        String numberWagons = wagons.stream()
+                .map(Wagon::getNumber)
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        return numberWagons;
+    }
 }
