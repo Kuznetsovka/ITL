@@ -7,7 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.itl.train.dto.ArrivalWagonPojo;
 import ru.itl.train.dto.ChangeWagonPojo;
 import ru.itl.train.dto.Wagon;
@@ -39,10 +42,9 @@ public class ActionController {
             summary = "Операция приема вагонов",
             description = "Операция приема вагонов на предприятие. На входе список вагонов с учетом на какой путь станции данные вагоны принимаются.")
     @PostMapping(value = "/wagon/arrival")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> arrivalWagon(@RequestBody ArrivalWagonPojo arrivalWagonPojo) {
         String msg = actionService.addArrivalWagons(arrivalWagonPojo);
-        return new ResponseEntity<>(msg, HttpStatus.OK);
+        return new ResponseEntity<>(msg, HttpStatus.CREATED);
     }
 
     /**
@@ -56,7 +58,6 @@ public class ActionController {
             summary = "Операция перестановки вагонов",
             description = "Операция перестановки вагонов. На входе список вагонов и путь на который они будут перемещены.")
     @PostMapping(value = "/wagon/change")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> changeWagon(@RequestBody ChangeWagonPojo changeWagonPojo) {
         String msg = actionService.changeWagons(changeWagonPojo);
         return new ResponseEntity<>(msg, HttpStatus.OK);
@@ -66,10 +67,9 @@ public class ActionController {
      * Операция убытия вагонов на сеть РЖД. Вагоны могут убывать только с начала состава.
      */
     @Operation(
-            summary = "убытия вагонов на сеть РЖД",
+            summary = "Убытия вагонов на сеть РЖД",
             description = "Операция убытия вагонов на сеть РЖД. Вагоны могут убывать только с начала состава.")
-    @PostMapping(value = "/wagon/change")
-    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/wagon/arrive")
     public ResponseEntity<String> departureWagon(@RequestBody List<Wagon> wagon) {
         String msg = actionService.departureWagons(wagon);
         return new ResponseEntity<>(msg, HttpStatus.OK);

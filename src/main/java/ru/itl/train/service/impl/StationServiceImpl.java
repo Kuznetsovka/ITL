@@ -137,7 +137,7 @@ public class StationServiceImpl implements StationService {
             if (maxOrder != null && !orders.get(orders.size() - 1).equals(maxOrder))
                 return Collections.emptyList();
         }
-        return null;
+        return mapTrainEntities;
     }
 
     @Override
